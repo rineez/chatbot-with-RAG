@@ -23,7 +23,7 @@ class SAPDefinition:
         self.data_type = data_type
 
     def __repr__(self):
-        return f"{self.field_name} ({self.data_type}): {self.description}"
+        return f"Field: {self.field_name}, Type: {self.data_type}, Description: {self.description}"
 
 class SAPRetrieval:
     def __init__(self, defs_path: str = SAP_DEFS_PATH, model_name: str = EMBEDDING_MODEL_NAME):
@@ -42,7 +42,8 @@ class SAPRetrieval:
             SAPDefinition(row["FieldName"], row["Description"], row["DataType"] + "[" + str(row["Length"]) + "]" )
             for _, row in df.iterrows()
         ]
-        descriptions = [d.description for d in self.definitions]
+        descriptions = [str(d) for d in self.definitions]
+        logger.info(descriptions)
         logger.info(f"Embedding {len(descriptions)} SAP descriptions...")
         self.embeddings = self.model.encode(descriptions, show_progress_bar=True, convert_to_numpy=True)
         logger.info("Building FAISS index...")
@@ -60,4 +61,4 @@ class SAPRetrieval:
         return results
 
 # Singleton instance for FastAPI
-sap_retrieval = SAPRetrieval() 
+sap_retrieval = SAPRetrieval()
