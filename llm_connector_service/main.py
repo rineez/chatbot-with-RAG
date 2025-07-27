@@ -34,10 +34,11 @@ async def query_llm(
     Accepts a prompt, retrieves relevant SAP definitions, augments the prompt, and streams responses from the Anthropic Claude API.
     """
     try:
+        defs_text = "Do not guess or make up expansion for abbreviations."
         # Retrieve top-3 SAP definitions
         retrieved_defs = sap_retrieval.query(request.prompt, top_k=3)
         # Format definitions
-        defs_text = "Relevant SAP definitions:\n"
+        defs_text += "Relevant SAP definitions:\n"
         for d, _ in retrieved_defs:
             defs_text += f"- {d.field_name} ({d.data_type}): {d.description}\n"
         defs_text += f"\nUser Query: {request.prompt}"
